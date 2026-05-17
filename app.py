@@ -201,6 +201,21 @@ html, body, [class*="css"] {
 .stAlert { border-radius: 10px !important; border-left-color: var(--warn) !important; }
 hr { border-color: var(--border) !important; }
 
+/* ── SIDEBAR TOGGLE BUTTON ── */
+[data-testid="stSidebarCollapsedControl"] {
+    background: var(--accent) !important;
+    border-radius: 8px !important;
+    padding: 4px !important;
+}
+[data-testid="stSidebarCollapsedControl"] svg {
+    fill: #080f1a !important;
+    color: #080f1a !important;
+}
+button[kind="header"] {
+    background: var(--accent) !important;
+    border-radius: 8px !important;
+}
+
 /* ── MOBILE RESPONSIVE ── */
 @media (max-width: 768px) {
     .block-container { padding: 1rem 1rem 3rem !important; }
