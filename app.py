@@ -3,6 +3,13 @@ import google.generativeai as genai
 import pandas as pd
 import os
 
+st.set_page_config(
+    page_title="Healthify Clone",
+    page_icon="🩺",
+    layout="centered",
+    initial_sidebar_state="collapsed"
+)
+
 api = os.getenv('GOOGLE_GEMINI_API')
 genai.configure(api_key=api)
 model = genai.GenerativeModel('gemini-2.5-flash-lite')
@@ -193,6 +200,51 @@ html, body, [class*="css"] {
 
 .stAlert { border-radius: 10px !important; border-left-color: var(--warn) !important; }
 hr { border-color: var(--border) !important; }
+
+/* ── MOBILE RESPONSIVE ── */
+@media (max-width: 768px) {
+    .block-container { padding: 1rem 1rem 3rem !important; }
+
+    .hero { margin-bottom: 1.2rem; padding-bottom: 1rem; }
+    .hero-eyebrow { font-size: 10px; letter-spacing: 2px; }
+    .hero-title { font-size: 1.8rem !important; }
+    .hero-sub { font-size: 13px; max-width: 100%; }
+
+    .steps-card {
+        padding: 0.9rem 1rem;
+        font-size: 13px;
+        line-height: 2.2;
+    }
+
+    .stTextInput > div > div > input {
+        font-size: 16px !important;
+        padding: 12px 14px !important;
+    }
+
+    .response-wrap { padding: 0.6rem 0.8rem; font-size: 14px; }
+
+    .bmi-text { font-size: 14px; }
+    .bmi-label { font-size: 14px; }
+}
+
+/* Mobile sidebar toggle hint */
+@media (max-width: 768px) {
+    .mobile-hint {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(0,245,160,0.06);
+        border: 1px solid rgba(0,245,160,0.2);
+        border-radius: 10px;
+        padding: 10px 14px;
+        margin-bottom: 1rem;
+        font-size: 13px;
+        color: var(--accent);
+    }
+}
+@media (min-width: 769px) {
+    .mobile-hint { display: none; }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -247,9 +299,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown("""
+<div class="mobile-hint">
+    ☰ &nbsp;Tap the <strong>&nbsp;arrow at top-left&nbsp;</strong> to open your profile sidebar first
+</div>
 <div class="steps-card">
-    <b>① </b>Fill in your profile in the sidebar &nbsp;·&nbsp;
-    <b>② </b>Check your live BMI &nbsp;·&nbsp;
+    <b>① </b>Open sidebar &amp; fill your profile &nbsp;<br>
+    <b>② </b>Check your live BMI &nbsp;<br>
     <b>③ </b>Ask any health question below
 </div>
 """, unsafe_allow_html=True)
