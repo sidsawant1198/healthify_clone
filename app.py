@@ -7,67 +7,285 @@ api = os.getenv('GOOGLE_GEMINI_API')
 genai.configure(api_key=api)
 model = genai.GenerativeModel('gemini-2.5-flash-lite')
 
-# Lets create the UI
-st.title(':orange[HEALTHIFY CLONE] :blue[AI Powered personal health assistant]')
-st.markdown('''##### This application will assist you have a healthy life. You can ask health related questions and get personalised guidance.''')
+# ── Custom CSS ─────────────────────────────────────────────────────────────
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
 
-tips = '''Follow the steps
-* Enter your details in the side bar.
-* Enter your Gender, Age, Height (cms), Weight (kgs).
-* Select the number on the fitness scale (0-5). 5-Fittest and 0-No fittness at all.
-* After filling the details write your query here and get customised response.'''
-st.write(tips)
+:root {
+    --bg:        #080f1a;
+    --bg2:       #0d1829;
+    --card:      #111f35;
+    --border:    #1e3352;
+    --accent:    #00f5a0;
+    --accent2:   #00c8ff;
+    --warn:      #ff6b6b;
+    --text:      #e8f4ff;
+    --muted:     #6b8cae;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+}
 
-# Lets configure sidebar
-st.sidebar.header(':red[ENTER YOUR DETAILS]')
-name = st.sidebar.text_input('Enter your name')
-gender = st.sidebar.selectbox('Select your gender', ['Male', 'Female'])
-age = st.sidebar.text_input('Enter your age in years')
-weight = st.sidebar.text_input('Enter your weight in kgs')
-height = st.sidebar.text_input('Enter your height in cms')
-fittness = st.sidebar.slider('Rate your fittness between 0-5', 0, 5, step=1)
+html, body, [class*="css"] {
+    font-family: var(--font-body);
+    background-color: var(--bg) !important;
+    color: var(--text) !important;
+}
 
-# Only calculate and show BMI when both weight and height are provided
+#MainMenu, footer, header { visibility: hidden; }
+.block-container { padding: 2rem 2.5rem 4rem !important; max-width: 860px !important; }
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+.hero-eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+.hero-title {
+    font-family: var(--font-head);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--text);
+    margin: 0;
+}
+.hero-title span { color: var(--accent); }
+.hero-sub {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.6;
+    margin-top: 4px;
+}
+
+.steps-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 2;
+}
+.steps-card b { color: var(--text); font-weight: 500; }
+
+.stTextInput > label {
+    font-family: var(--font-head) !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    color: var(--accent2) !important;
+}
+.stTextInput > div > div > input {
+    background: var(--card) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 10px !important;
+    color: var(--text) !important;
+    font-family: var(--font-body) !important;
+    font-size: 15px !important;
+    padding: 14px 16px !important;
+}
+.stTextInput > div > div > input:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(0,245,160,0.08) !important;
+}
+
+[data-testid="stSidebar"] {
+    background: var(--bg2) !important;
+    border-right: 1px solid var(--border) !important;
+}
+[data-testid="stSidebar"] .block-container { padding: 1.5rem 1.2rem !important; }
+
+.sidebar-header {
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.3px;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border);
+}
+.sidebar-header span { color: var(--accent); }
+
+[data-testid="stSidebar"] .stTextInput > label,
+[data-testid="stSidebar"] .stSelectbox > label,
+[data-testid="stSidebar"] .stSlider > label {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: 1.5px !important;
+    text-transform: uppercase !important;
+    color: var(--muted) !important;
+}
+[data-testid="stSidebar"] .stTextInput > div > div > input {
+    background: var(--card) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 8px !important;
+    color: var(--text) !important;
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+}
+[data-testid="stSidebar"] .stSelectbox > div > div {
+    background: var(--card) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 8px !important;
+    color: var(--text) !important;
+}
+
+.bmi-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, rgba(0,245,160,0.08), rgba(0,200,255,0.06));
+    border: 1px solid rgba(0,245,160,0.25);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 0.8rem;
+}
+.bmi-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 2s infinite;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(1.3); }
+}
+.bmi-text { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: var(--accent); }
+.bmi-label { font-size: 11px; color: var(--muted); margin-top: 2px; letter-spacing: 0.5px; }
+.bmi-muted { font-size: 13px; color: var(--muted); padding: 10px 0 0; }
+
+.response-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    border-radius: 14px;
+    padding: 1.8rem 2rem;
+    margin-top: 1.5rem;
+    line-height: 1.8;
+    font-size: 15px;
+}
+.response-tag {
+    font-family: var(--font-head);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+}
+
+.stAlert { border-radius: 10px !important; border-left-color: var(--warn) !important; }
+hr { border-color: var(--border) !important; }
+</style>
+""", unsafe_allow_html=True)
+
+
+# ── Sidebar ────────────────────────────────────────────────────────────────
+st.sidebar.markdown('<div class="sidebar-header">Your <span>Profile</span></div>', unsafe_allow_html=True)
+
+name     = st.sidebar.text_input('Full name')
+gender   = st.sidebar.selectbox('Gender', ['Male', 'Female', 'Other'])
+age      = st.sidebar.text_input('Age (years)')
+weight   = st.sidebar.text_input('Weight (kg)')
+height   = st.sidebar.text_input('Height (cm)')
+fittness = st.sidebar.slider('Fitness level', 0, 5, step=1,
+                              help='0 = sedentary  ·  5 = peak fitness')
+
+st.sidebar.markdown('<hr>', unsafe_allow_html=True)
+
+bmi = None
+bmi_cat = ''
 if weight and height:
     try:
         bmi = pd.to_numeric(weight) / (pd.to_numeric(height) / 100) ** 2
-        st.sidebar.write(f'{name} your BMI is: {round(bmi, 2)} kg/m^2')
+        bmi_val = round(bmi, 2)
+        if bmi_val < 18.5:   bmi_cat = "Underweight"
+        elif bmi_val < 25.0: bmi_cat = "Normal weight"
+        elif bmi_val < 30.0: bmi_cat = "Overweight"
+        else:                bmi_cat = "Obese"
+
+        st.sidebar.markdown(f"""
+        <div class="bmi-badge">
+            <div class="bmi-dot"></div>
+            <div>
+                <div class="bmi-text">{bmi_val} kg/m²</div>
+                <div class="bmi-label">{bmi_cat}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     except Exception:
         bmi = None
-        st.sidebar.write('Please enter valid numbers for weight and height.')
+        st.sidebar.markdown('<p class="bmi-muted">⚠ Enter valid numbers.</p>', unsafe_allow_html=True)
 else:
-    bmi = None
-    st.sidebar.write('Enter your weight and height to see your BMI.')
+    st.sidebar.markdown('<p class="bmi-muted">Fill in weight &amp; height to see your BMI.</p>', unsafe_allow_html=True)
 
-# Lets use genai model to get the output
-user_query = st.text_input('Enter your question here')
+
+# ── Main ───────────────────────────────────────────────────────────────────
+st.markdown("""
+<div class="hero">
+    <div class="hero-eyebrow">AI · Health · Personalised</div>
+    <h1 class="hero-title">Healthify <span>Clone</span></h1>
+    <p class="hero-sub">Your personal health companion powered by Gemini AI. Ask anything — get guidance built around <em>your</em> body.</p>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<div class="steps-card">
+    <b>① </b>Fill in your profile in the sidebar &nbsp;·&nbsp;
+    <b>② </b>Check your live BMI &nbsp;·&nbsp;
+    <b>③ </b>Ask any health question below
+</div>
+""", unsafe_allow_html=True)
+
+user_query = st.text_input('Ask your health question', placeholder='e.g. Why do I feel tired after meals?')
 
 if user_query:
     if not weight or not height or bmi is None:
-        st.warning('Please fill in your weight and height in the sidebar before asking a question.')
+        st.warning('Please fill in your weight and height in the sidebar first.')
     else:
-        prompt = f'''Assume you are a health expert. You are required to
-answer the question asked by the user. Use the following details provided by
-the user.
-name of user is {name}
-gender is {gender}
-age is {age}
-weight is {weight} kgs
-height is {height} cms
-bmi is {round(bmi, 2)} kg/m^2
-and user rates his/her fittness as {fittness} out of 5
+        prompt = f"""Assume you are a health expert. Answer the user's question using their profile below.
 
-Your output should be in the following format
-* It should start by giving one two line comment on the details that have been provided.
-* It should explain what the real problem is based on the query asked by user.
-* What could be the possible reason for the problem.
-* What are the possible solutions for the problem.
-* You can also mention what doctor to see (specialization) if required.
-* Striclty do not recommend or advise any medicine.
-* output should be in bullet points and use tables wherever required.
-* In the end give 5-7 line of summary of every thing that has been discussed.
+User profile:
+- Name: {name}
+- Gender: {gender}
+- Age: {age}
+- Weight: {weight} kg
+- Height: {height} cm
+- BMI: {round(bmi, 2)} kg/m² ({bmi_cat})
+- Fitness self-rating: {fittness} / 5
 
-here is the query from the user {user_query}'''
+Response format:
+* Open with a 1-2 line personalised comment on their profile.
+* Explain the problem clearly based on their query.
+* List possible causes.
+* Suggest practical, evidence-based solutions.
+* Recommend a specialist type if relevant.
+* Do NOT recommend any specific medication.
+* Use bullet points and tables where helpful.
+* Close with a 5-7 line summary.
 
-        response = model.generate_content(prompt)
+User's question: {user_query}"""
+
+        with st.spinner('Analysing your profile…'):
+            response = model.generate_content(prompt)
+
+        st.markdown('<div class="response-wrap"><div class="response-tag">✦ AI Health Guidance</div>', unsafe_allow_html=True)
         st.write(response.text)
+        st.markdown('</div>', unsafe_allow_html=True)
