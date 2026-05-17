@@ -7,7 +7,7 @@ st.set_page_config(
     page_title="Healthify Clone",
     page_icon="🩺",
     layout="centered",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="auto"
 )
 
 api = os.getenv('GOOGLE_GEMINI_API')
@@ -202,18 +202,28 @@ html, body, [class*="css"] {
 hr { border-color: var(--border) !important; }
 
 /* ── SIDEBAR TOGGLE BUTTON ── */
-[data-testid="stSidebarCollapsedControl"] {
+[data-testid="stSidebarCollapsedControl"],
+[data-testid="stSidebarCollapseButton"],
+button[data-testid="stSidebarCollapsedControl"],
+section[data-testid="stSidebarCollapsedControl"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     background: var(--accent) !important;
     border-radius: 8px !important;
-    padding: 4px !important;
+    padding: 6px !important;
+    position: fixed !important;
+    top: 12px !important;
+    left: 12px !important;
+    z-index: 9999 !important;
+    box-shadow: 0 2px 12px rgba(0,245,160,0.4) !important;
 }
-[data-testid="stSidebarCollapsedControl"] svg {
+[data-testid="stSidebarCollapsedControl"] svg,
+[data-testid="stSidebarCollapseButton"] svg {
     fill: #080f1a !important;
     color: #080f1a !important;
-}
-button[kind="header"] {
-    background: var(--accent) !important;
-    border-radius: 8px !important;
+    width: 20px !important;
+    height: 20px !important;
 }
 
 /* ── MOBILE RESPONSIVE ── */
