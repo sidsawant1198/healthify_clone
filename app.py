@@ -168,7 +168,7 @@ html, body, [class*="css"] {
     50%       { opacity: 0.5; transform: scale(1.3); }
 }
 .bmi-text { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: var(--accent); }
-.bmi-label { font-size: 11px; color: var(--muted); margin-top: 2px; letter-spacing: 0.5px; }
+.bmi-label { font-size: 16px; color: var(--muted); margin-top: 2px; letter-spacing: 0.5px; }
 .bmi-muted { font-size: 13px; color: var(--muted); padding: 10px 0 0; }
 
 .response-wrap {
@@ -176,19 +176,19 @@ html, body, [class*="css"] {
     border: 1px solid var(--border);
     border-top: 3px solid var(--accent);
     border-radius: 14px;
-    padding: 1.8rem 2rem;
+    padding: 0.7rem 1rem;
     margin-top: 1.5rem;
     line-height: 1.8;
     font-size: 15px;
 }
 .response-tag {
     font-family: var(--font-head);
-    font-size: 11px;
+    font-size: 9px; margin-bottom: 0.4rem;
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--accent);
-    margin-bottom: 1rem;
+    
 }
 
 .stAlert { border-radius: 10px !important; border-left-color: var(--warn) !important; }
