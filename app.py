@@ -205,7 +205,7 @@ hr { border-color: var(--border) !important; }
 @media (max-width: 768px) {
     .block-container { padding: 1rem 1rem 3rem !important; }
 
-    .hero { margin-bottom: 1.2rem; padding-bottom: 1rem; }
+    .hero { margin-bottom: 0.8rem; padding-bottom: 0.8rem; }
     .hero-eyebrow { font-size: 10px; letter-spacing: 2px; }
     .hero-title { font-size: 1.8rem !important; }
     .hero-sub { font-size: 13px; max-width: 100%; }
@@ -230,16 +230,17 @@ hr { border-color: var(--border) !important; }
 /* Mobile sidebar toggle hint */
 @media (max-width: 768px) {
     .mobile-hint {
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        display: block;
         background: rgba(0,245,160,0.06);
         border: 1px solid rgba(0,245,160,0.2);
         border-radius: 10px;
         padding: 10px 14px;
-        margin-bottom: 1rem;
+        margin-bottom: 0.8rem;
         font-size: 13px;
         color: var(--accent);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
 @media (min-width: 769px) {
@@ -300,12 +301,12 @@ st.markdown("""
 
 st.markdown("""
 <div class="mobile-hint">
-    ☰ &nbsp;Tap the <strong>&nbsp;arrow at top-left&nbsp;</strong> to open your profile sidebar first
+    ☰ Tap the top-left arrow to open your profile
 </div>
 <div class="steps-card">
-    <b>① </b>Open sidebar &amp; fill your profile &nbsp;<br>
-    <b>② </b>Check your live BMI &nbsp;<br>
-    <b>③ </b>Ask any health question below
+    <b>① </b>Open sidebar &amp; fill your profile<br>
+    <b>② </b>Check your live BMI<br>
+    <b>③ </b>Ask your health question below
 </div>
 """, unsafe_allow_html=True)
 
