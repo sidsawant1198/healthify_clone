@@ -10,6 +10,7 @@ model = genai.GenerativeModel('gemini-2.5-flash-lite')
 # Lets create the UI
 st.title(':orange[HEALTHIFY CLONE] :blue[AI Powered personal health assistant]')
 st.markdown('''##### This application will assist you have a healthy life. You can ask health related questions and get personalised guidance.''')
+
 tips = '''Follow the steps
 * Enter your details in the side bar.
 * Enter your Gender, Age, Height (cms), Weight (kgs).
@@ -20,25 +21,40 @@ st.write(tips)
 # Lets configure sidebar
 st.sidebar.header(':red[ENTER YOUR DETAILS]')
 name = st.sidebar.text_input('Enter your name')
-gender = st.sidebar.selectbox('Select your gender',['Male','Female'])
+gender = st.sidebar.selectbox('Select your gender', ['Male', 'Female'])
 age = st.sidebar.text_input('Enter your age in years')
 weight = st.sidebar.text_input('Enter your weight in kgs')
 height = st.sidebar.text_input('Enter your height in cms')
-bmi = pd.to_numeric(weight)/(pd.to_numeric(height)/100)**2
-fittness = st.sidebar.slider('Rate your fittness between 0-5',0,5,step=1)
-st.sidebar.write(f'{name} your BMI is: {round(bmi,2)} kg/m^2')
+fittness = st.sidebar.slider('Rate your fittness between 0-5', 0, 5, step=1)
+
+# Only calculate and show BMI when both weight and height are provided
+if weight and height:
+    try:
+        bmi = pd.to_numeric(weight) / (pd.to_numeric(height) / 100) ** 2
+        st.sidebar.write(f'{name} your BMI is: {round(bmi, 2)} kg/m^2')
+    except Exception:
+        bmi = None
+        st.sidebar.write('Please enter valid numbers for weight and height.')
+else:
+    bmi = None
+    st.sidebar.write('Enter your weight and height to see your BMI.')
 
 # Lets use genai model to get the output
 user_query = st.text_input('Enter your question here')
-prompt = f'''Assume you are a health expert. You are required to
-answer the question asked by the user. Use the following details provided by 
+
+if user_query:
+    if not weight or not height or bmi is None:
+        st.warning('Please fill in your weight and height in the sidebar before asking a question.')
+    else:
+        prompt = f'''Assume you are a health expert. You are required to
+answer the question asked by the user. Use the following details provided by
 the user.
 name of user is {name}
 gender is {gender}
 age is {age}
 weight is {weight} kgs
 height is {height} cms
-bmi is {bmi} kg/m^2
+bmi is {round(bmi, 2)} kg/m^2
 and user rates his/her fittness as {fittness} out of 5
 
 Your output should be in the following format
@@ -53,6 +69,5 @@ Your output should be in the following format
 
 here is the query from the user {user_query}'''
 
-if user_query:
-    response = model.generate_content(prompt)
-    st.write(response.text)
+        response = model.generate_content(prompt)
+        st.write(response.text)
