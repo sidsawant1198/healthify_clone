@@ -2,6 +2,8 @@ import streamlit as st
 import google.generativeai as genai
 import pandas as pd
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 st.set_page_config(
     page_title="Healthify Clone",
